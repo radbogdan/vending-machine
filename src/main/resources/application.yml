@@ -1,0 +1,19 @@
+spring:
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: mvp
+security:
+  jwt:
+    uri: /login
+    expirationTime: 1
+    secret: mvp-secret
+    entry-point-url: /**
+    bearer-header: Bearer
+  roles:
+    - ROLE_SELLER
+    - ROLE_BUYER
+logging:
+  level:
+    root: info
