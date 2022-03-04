@@ -4,21 +4,19 @@ import com.mvp.vendingmachine.mapper.UserMapper;
 import com.mvp.vendingmachine.storage.MongoProductRepository;
 import com.mvp.vendingmachine.storage.MongoUserRepository;
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.testcontainers.containers.FixedHostPortGenericContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.MongoDBContainer;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@Testcontainers
 public abstract class AbstractBaseITest {
-    @Container
-    final static FixedHostPortGenericContainer mongoDBContainer = new FixedHostPortGenericContainer("mongo:latest").withFixedExposedPort(27017, 27017);
+
+    final static MongoDBContainer mongoDBContainer = new MongoDBContainer("mongo:latest").withReuse(true);
     @Autowired
     MongoUserRepository mongoUserRepository;
     @Autowired
@@ -26,16 +24,15 @@ public abstract class AbstractBaseITest {
     @Autowired
     UserMapper userMapper;
 
+    @DynamicPropertySource
+    public static void overrideProps(DynamicPropertyRegistry registry) {
+        registry.add("spring.data.mongodb.port", mongoDBContainer::getFirstMappedPort);
+    }
+
     @SneakyThrows
     @BeforeAll
     public static void setup() {
         mongoDBContainer.start();
-
-    }
-
-    @AfterAll
-    public static void clean() {
-        mongoDBContainer.stop();
     }
 
 }

@@ -33,10 +33,4 @@ will start up the project.
 Created test uses TESTCONTAINERS which supports JUnit tests, providing lightweight, throwaway instances of common
 databases, or anything else that can run in a Docker container.
 
-Run the following command to make sure that you don't have a running mongo on docker machine.
-
-$ docker-compose down
-
-in the project root directory.
-
 $ gradle clean build
