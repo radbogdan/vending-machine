@@ -2,7 +2,6 @@ package com.mvp.vendingmachine.security.authentication;
 
 import com.mvp.vendingmachine.storage.MongoUserRepository;
 import com.mvp.vendingmachine.storage.model.StoredUser;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
@@ -15,11 +14,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
-@Slf4j
 @Component
 public final class LoginProvider implements AuthenticationProvider {
 
@@ -38,7 +35,6 @@ public final class LoginProvider implements AuthenticationProvider {
 
         final StoredUser storedUser = repository.findById(username)
             .orElseThrow(() -> {
-                log.error(format("User [%s] not found!", username));
                 return new AuthenticationException(format("User [%s] not found!", username)) {
                 };
             });

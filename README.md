@@ -4,7 +4,7 @@ REST API implementation for querying the available users and products.
 
 # Build
 
-The project is built using the embedded maven wrapper:
+The project is built using the gradle command:
 
 $ gradle clean build
 
@@ -28,7 +28,7 @@ $ gradle bootRun
 
 will start up the project.
 
-## Buld/Run the test of the application
+## Build/Run the test of the application
 
 Created test uses TESTCONTAINERS which supports JUnit tests, providing lightweight, throwaway instances of common
 databases, or anything else that can run in a Docker container.

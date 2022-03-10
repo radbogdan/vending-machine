@@ -4,7 +4,6 @@ import com.mvp.vendingmachine.config.RolesProperties;
 import com.mvp.vendingmachine.config.SecurityHeaders;
 import com.mvp.vendingmachine.security.authorization.exception.AuthorizationException;
 import io.jsonwebtoken.*;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
@@ -24,9 +23,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static java.lang.String.format;
-
-@Slf4j
 public final class JwtTokenAuthorization extends OncePerRequestFilter {
 
 
@@ -54,10 +50,8 @@ public final class JwtTokenAuthorization extends OncePerRequestFilter {
             if (username != null) {
                 final boolean authorized = isAuthorized(claims);
                 if (!authorized) {
-                    log.warn("Unauthorized to perform the request");
                     throw new AuthorizationException("Unauthorized to perform the request");
                 }
-                log.debug(format("User [%s] authenticated successfully!", username));
                 Set<SimpleGrantedAuthority> authorities = claims.get(ROLE_VALUE, (Class<List<LinkedHashMap<String, String>>>) (Class<?>) List.class)
                     .stream().flatMap(m -> m.values().stream())
                     .map(SimpleGrantedAuthority::new).collect(Collectors.toSet());
@@ -67,12 +61,10 @@ public final class JwtTokenAuthorization extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(auth);
 
             } else {
-                log.error("Missing username from token");
                 throw new AuthorizationException("Missing username from token");
             }
             filterChain.doFilter(request, response);
         } catch (Exception ex) {
-            log.error(format("Authorization for user [%s] failed!", username), ex);
             // In case of failure. Make sure it's clear; so guarantee user won't be authenticated
             SecurityContextHolder.clearContext();
             throw ex;
@@ -95,7 +87,6 @@ public final class JwtTokenAuthorization extends OncePerRequestFilter {
                 .setSigningKey(securityHeaders.getSecret())
                 .parseClaimsJws(token.replace(securityHeaders.getBearerHeader(), ""));
         } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException ex) {
-            log.error(format("Invalid JWT token: %s", ex.getMessage()));
             throw new AuthorizationException("Invalid JWT token", ex);
         }
     }

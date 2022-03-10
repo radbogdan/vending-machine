@@ -5,7 +5,6 @@ import com.mvp.vendingmachine.config.SecurityHeaders;
 import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
@@ -24,9 +23,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 
-import static java.lang.String.format;
-
-@Slf4j
 public final class JwtUsernameAndPasswordAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
 
@@ -56,7 +52,6 @@ public final class JwtUsernameAndPasswordAuthenticationFilter extends AbstractAu
             final LoginRequest loginRequest = new ObjectMapper().readValue(request.getInputStream(), LoginRequest.class);
 
             if (StringUtils.isBlank(loginRequest.getUsername()) || StringUtils.isBlank(loginRequest.getPassword())) {
-                log.warn("Username or Password not provided!");
                 throw new AuthenticationServiceException("Username or Password not provided!");
             }
 
@@ -90,8 +85,6 @@ public final class JwtUsernameAndPasswordAuthenticationFilter extends AbstractAu
             .write(new ObjectMapper().writeValueAsString(new TokenResponse(token)));
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpServletResponse.SC_OK);
-
-        log.info(format("Token for user [%s] created successfully!", auth.getName()));
     }
 
 
